@@ -1,11 +1,8 @@
-#library(ggplot2)
-#ggplot(data=iris, aes(x = Petal.Length, y = Petal.Width)) +
-  #geom_point(aes(color=Species)) +
-  #xlab("Petal Length") +  ylab("Petal Width")
 euclideanDistance <- function(u, v)
 {
   sqrt(sum((u - v)^2))
 }
+
 sortObjectsByDist <- function(xl, z, metricFunction = euclideanDistance)
 {
   l <- dim(xl)[1]
@@ -19,8 +16,25 @@ sortObjectsByDist <- function(xl, z, metricFunction = euclideanDistance)
   return (orderedXl);
 }
 
-kNN <- function()
+kNN <- function(xl, z, k)
 {
-  orderedXl <- sortObjectsByDist(xl = iris[,3:5], z = c(1,2))
+  orderedXl <- sortObjectsByDist(xl, z)
+  n <- dim(orderedXl)[2] - 1
+  classes <- orderedXl[1:k, n + 1]
+  counts <- table(classes)
+  class <- names(which.max(counts))
+  return (class)
 }
+
+library(ggplot2)
+p <- ggplot(data=iris, aes(x = Petal.Length, y = Petal.Width)) +
+geom_point(aes(color=Species)) +
+xlab("Petal Length") +  ylab("Petal Width")
+
+colors <- c("setosa" = "red", "versicolor" = "green3", "virginica" = "blue")
+z <- c(4.5, 1.5)
+xl <- iris[, 3:5]
+class <- kNN(xl, z, k=7)
+
+p + geom_point(x = z[1], y = z[2], shape = 15, size = 2, colour = colors[class])
 
